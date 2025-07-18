@@ -3,6 +3,7 @@ import express from 'express'
 import { ENV_CONFIG } from '~/constants/config'
 import { defaultErrorHandler } from '~/middlewares/error.middlewares'
 import imagesRouter from '~/routes/images.routes'
+import leaguesRouter from '~/routes/leagues.routes'
 import nationsRouter from '~/routes/nations.routes'
 import staticRouter from '~/routes/static.routes'
 import usersRouter from '~/routes/users.routes'
@@ -21,6 +22,7 @@ app.use('/users', usersRouter)
 app.use('/images', imagesRouter)
 app.use('/static', staticRouter)
 app.use('/nations', nationsRouter)
+app.use('/leagues', leaguesRouter)
 app.use(defaultErrorHandler)
 
 app.listen(port, () => {

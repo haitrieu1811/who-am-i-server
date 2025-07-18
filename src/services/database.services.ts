@@ -2,6 +2,7 @@ import { Collection, Db, MongoClient } from 'mongodb'
 
 import { ENV_CONFIG } from '~/constants/config'
 import Image from '~/models/databases/Image'
+import League from '~/models/databases/League'
 import Nation from '~/models/databases/Nation'
 import { RefreshToken } from '~/models/databases/RefreshToken'
 import User from '~/models/databases/User'
@@ -41,6 +42,10 @@ class DatabaseService {
 
   get nations(): Collection<Nation> {
     return this.db.collection(ENV_CONFIG.DB_NATIONS_COLLECTION)
+  }
+
+  get leagues(): Collection<League> {
+    return this.db.collection(ENV_CONFIG.DB_LEAGUES_COLLECTION)
   }
 }
 
