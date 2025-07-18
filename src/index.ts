@@ -6,6 +6,7 @@ import imagesRouter from '~/routes/images.routes'
 import leaguesRouter from '~/routes/leagues.routes'
 import nationsRouter from '~/routes/nations.routes'
 import staticRouter from '~/routes/static.routes'
+import teamsRouter from '~/routes/teams.routes'
 import usersRouter from '~/routes/users.routes'
 import databaseService from '~/services/database.services'
 import { initFolders } from '~/utils/file'
@@ -23,6 +24,7 @@ app.use('/images', imagesRouter)
 app.use('/static', staticRouter)
 app.use('/nations', nationsRouter)
 app.use('/leagues', leaguesRouter)
+app.use('/teams', teamsRouter)
 app.use(defaultErrorHandler)
 
 app.listen(port, () => {

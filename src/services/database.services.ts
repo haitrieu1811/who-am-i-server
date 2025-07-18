@@ -5,6 +5,7 @@ import Image from '~/models/databases/Image'
 import League from '~/models/databases/League'
 import Nation from '~/models/databases/Nation'
 import { RefreshToken } from '~/models/databases/RefreshToken'
+import Team from '~/models/databases/Team'
 import User from '~/models/databases/User'
 
 const uri = `mongodb+srv://${ENV_CONFIG.DB_USERNAME}:${ENV_CONFIG.DB_PASSWORD}@whoareyoucluster.ocwbpmd.mongodb.net/?retryWrites=true&w=majority&appName=WhoAreYouCluster`
@@ -46,6 +47,10 @@ class DatabaseService {
 
   get leagues(): Collection<League> {
     return this.db.collection(ENV_CONFIG.DB_LEAGUES_COLLECTION)
+  }
+
+  get teams(): Collection<Team> {
+    return this.db.collection(ENV_CONFIG.DB_TEAMS_COLLECTION)
   }
 }
 
