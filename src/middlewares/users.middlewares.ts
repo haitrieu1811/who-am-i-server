@@ -1,10 +1,16 @@
 import { Request } from 'express'
 import { checkSchema, ParamSchema } from 'express-validator'
+import { JsonWebTokenError } from 'jsonwebtoken'
+import capitalize from 'lodash/capitalize'
 
+import { ENV_CONFIG } from '~/constants/config'
 import { UserRole } from '~/constants/enum'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { ErrorWithStatus } from '~/models/Error'
 import databaseService from '~/services/database.services'
 import { hashPassword } from '~/utils/crypto'
 import { numberEnumToArray } from '~/utils/helpers'
+import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 
 const userRoles = numberEnumToArray(UserRole)
@@ -109,5 +115,88 @@ export const loginValidator = validate(
       }
     },
     ['body']
+  )
+)
+
+export const refreshTokenValidator = validate(
+  checkSchema(
+    {
+      refreshToken: {
+        trim: true,
+        custom: {
+          options: async (value: string, { req }) => {
+            if (!value) {
+              throw new ErrorWithStatus({
+                message: 'Refresh token là bắt buộc.',
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            try {
+              const [refreshToken, decodedRefreshToken] = await Promise.all([
+                databaseService.refreshTokens.findOne({ token: value }),
+                verifyToken({
+                  token: value,
+                  secretOrPublicKey: ENV_CONFIG.JWT_SECRET_REFRESH_TOKEN
+                })
+              ])
+              if (!refreshToken) {
+                throw new ErrorWithStatus({
+                  message: 'Refresh token không tồn tại.',
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+              ;(req as Request).decodedRefreshToken = decodedRefreshToken
+            } catch (error) {
+              if (error instanceof JsonWebTokenError) {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.UNAUTHORIZED,
+                  message: capitalize(error.message)
+                })
+              }
+              throw error
+            }
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+
+export const accessTokenValidator = validate(
+  checkSchema(
+    {
+      Authorization: {
+        trim: true,
+        custom: {
+          options: async (value, { req }) => {
+            const accessToken = value?.split(' ')[1]
+            if (!accessToken) {
+              throw new ErrorWithStatus({
+                message: 'Access token là bắt buộc.',
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            try {
+              const decodedAuthorization = await verifyToken({
+                token: accessToken,
+                secretOrPublicKey: ENV_CONFIG.JWT_SECRET_ACCESS_TOKEN
+              })
+              ;(req as Request).decodedAuthorization = decodedAuthorization
+              return true
+            } catch (error) {
+              if (error instanceof JsonWebTokenError) {
+                throw new ErrorWithStatus({
+                  status: HTTP_STATUS.UNAUTHORIZED,
+                  message: capitalize(error.message)
+                })
+              }
+              throw error
+            }
+          }
+        }
+      }
+    },
+    ['headers']
   )
 )

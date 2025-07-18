@@ -1,6 +1,8 @@
 import { Collection, Db, MongoClient } from 'mongodb'
 
 import { ENV_CONFIG } from '~/constants/config'
+import Image from '~/models/databases/Image'
+import { RefreshToken } from '~/models/databases/RefreshToken'
 import User from '~/models/databases/User'
 
 const uri = `mongodb+srv://${ENV_CONFIG.DB_USERNAME}:${ENV_CONFIG.DB_PASSWORD}@whoareyoucluster.ocwbpmd.mongodb.net/?retryWrites=true&w=majority&appName=WhoAreYouCluster`
@@ -26,6 +28,14 @@ class DatabaseService {
 
   get users(): Collection<User> {
     return this.db.collection(ENV_CONFIG.DB_USERS_COLLECTION)
+  }
+
+  get refreshTokens(): Collection<RefreshToken> {
+    return this.db.collection(ENV_CONFIG.DB_REFRESH_TOKENS_COLLECTION)
+  }
+
+  get images(): Collection<Image> {
+    return this.db.collection(ENV_CONFIG.DB_IMAGES_COLLECTION)
   }
 }
 
