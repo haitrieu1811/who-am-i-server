@@ -1,4 +1,4 @@
-import { Request } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { checkSchema, ParamSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import capitalize from 'lodash/capitalize'
@@ -6,6 +6,7 @@ import capitalize from 'lodash/capitalize'
 import { ENV_CONFIG } from '~/constants/config'
 import { UserRole } from '~/constants/enum'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { TokenPayload } from '~/models/databases/User'
 import { ErrorWithStatus } from '~/models/Error'
 import databaseService from '~/services/database.services'
 import { hashPassword } from '~/utils/crypto'
@@ -200,3 +201,16 @@ export const accessTokenValidator = validate(
     ['headers']
   )
 )
+
+export const isAdminValidator = (req: Request, res: Response, next: NextFunction) => {
+  const { userRole } = req.decodedAuthorization as TokenPayload
+  if (userRole !== UserRole.Admin) {
+    next(
+      new ErrorWithStatus({
+        message: 'Truy cập bị từ chối.',
+        status: HTTP_STATUS.FORBIDDEN
+      })
+    )
+  }
+  next()
+}
