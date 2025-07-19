@@ -5,6 +5,7 @@ import { defaultErrorHandler } from '~/middlewares/error.middlewares'
 import imagesRouter from '~/routes/images.routes'
 import leaguesRouter from '~/routes/leagues.routes'
 import nationsRouter from '~/routes/nations.routes'
+import playersRouter from '~/routes/players.routes'
 import staticRouter from '~/routes/static.routes'
 import teamsRouter from '~/routes/teams.routes'
 import usersRouter from '~/routes/users.routes'
@@ -25,6 +26,7 @@ app.use('/static', staticRouter)
 app.use('/nations', nationsRouter)
 app.use('/leagues', leaguesRouter)
 app.use('/teams', teamsRouter)
+app.use('/players', playersRouter)
 app.use(defaultErrorHandler)
 
 app.listen(port, () => {
