@@ -247,6 +247,35 @@ class PlayersService {
       player: players[0]
     }
   }
+
+  async updateOne({ body, playerId }: { body: CreatePlayerReqBody; playerId: ObjectId }) {
+    await databaseService.players.updateOne(
+      {
+        _id: playerId
+      },
+      {
+        $set: {
+          ...body,
+          dateOfBirth: new Date(),
+          nationId: new ObjectId(body.nationId),
+          leagueId: new ObjectId(body.leagueId),
+          teamId: new ObjectId(body.teamId),
+          avatar: body.avatar ? new ObjectId(body.avatar) : null
+        },
+        $currentDate: {
+          updatedAt: true
+        }
+      }
+    )
+    const { players } = await this.aggregatePlayers({
+      match: {
+        _id: playerId
+      }
+    })
+    return {
+      player: players[0]
+    }
+  }
 }
 
 const playersService = new PlayersService()

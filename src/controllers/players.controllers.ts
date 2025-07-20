@@ -37,3 +37,17 @@ export const getPlayerController = async (req: Request<PlayerIdReqParams>, res: 
     data: result
   })
 }
+
+export const updatePlayerController = async (
+  req: Request<PlayerIdReqParams, any, CreatePlayerReqBody>,
+  res: Response
+) => {
+  const result = await playersService.updateOne({
+    body: req.body,
+    playerId: new ObjectId(req.params.playerId)
+  })
+  res.json({
+    message: 'Cập nhật cầu thủ thành công.',
+    data: result
+  })
+}
