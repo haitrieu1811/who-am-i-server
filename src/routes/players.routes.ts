@@ -2,6 +2,7 @@ import { Router } from 'express'
 
 import {
   createPlayerController,
+  deletePlayerController,
   getPlayerController,
   getPlayersController,
   updatePlayerController
@@ -25,5 +26,7 @@ playersRouter.put(
   createPlayerValidator,
   updatePlayerController
 )
+
+playersRouter.delete('/:playerId', accessTokenValidator, isAdminValidator, playerIdValidator, deletePlayerController)
 
 export default playersRouter

@@ -51,3 +51,10 @@ export const updatePlayerController = async (
     data: result
   })
 }
+
+export const deletePlayerController = async (req: Request<PlayerIdReqParams>, res: Response) => {
+  await playersService.deleteOne(new ObjectId(req.params.playerId))
+  res.json({
+    message: 'Xóa cầu thủ thành công.'
+  })
+}

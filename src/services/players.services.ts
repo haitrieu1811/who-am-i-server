@@ -276,6 +276,13 @@ class PlayersService {
       player: players[0]
     }
   }
+
+  async deleteOne(playerId: ObjectId) {
+    await databaseService.players.deleteOne({
+      _id: playerId
+    })
+    return true
+  }
 }
 
 const playersService = new PlayersService()
