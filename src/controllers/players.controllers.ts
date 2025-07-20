@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { ObjectId } from 'mongodb'
 
-import { CreatePlayerReqBody, GetPlayersReqQuery } from '~/models/requests/players.requests'
+import { CreatePlayerReqBody, GetPlayersReqQuery, PlayerIdReqParams } from '~/models/requests/players.requests'
 import playersService from '~/services/players.services'
 
 export const createPlayerController = async (
@@ -26,5 +27,13 @@ export const getPlayersController = async (
       players,
       pagination
     }
+  })
+}
+
+export const getPlayerController = async (req: Request<PlayerIdReqParams>, res: Response) => {
+  const result = await playersService.findOne(new ObjectId(req.params.playerId))
+  res.json({
+    message: 'Lấy thông tin cầu thủ thành công.',
+    data: result
   })
 }

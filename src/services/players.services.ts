@@ -236,6 +236,17 @@ class PlayersService {
       totalPages: Math.ceil(totalPlayers / limit)
     }
   }
+
+  async findOne(playerId: ObjectId) {
+    const { players } = await this.aggregatePlayers({
+      match: {
+        _id: playerId
+      }
+    })
+    return {
+      player: players[0]
+    }
+  }
 }
 
 const playersService = new PlayersService()

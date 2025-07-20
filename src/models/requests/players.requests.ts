@@ -15,3 +15,7 @@ export type CreatePlayerReqBody = {
 export type GetPlayersReqQuery = PaginationReqQuery & {
   name?: string
 }
+
+export type PlayerIdReqParams = {
+  playerId: string
+}
