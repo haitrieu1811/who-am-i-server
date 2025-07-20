@@ -1,4 +1,5 @@
 import { PlayerPosition } from '~/constants/enum'
+import { PaginationReqQuery } from '~/models/requests/utils.requests'
 
 export type CreatePlayerReqBody = {
   nationId: string
@@ -9,4 +10,8 @@ export type CreatePlayerReqBody = {
   dateOfBirth: Date
   shirtNumber: number
   position: PlayerPosition
+}
+
+export type GetPlayersReqQuery = PaginationReqQuery & {
+  name?: string
 }

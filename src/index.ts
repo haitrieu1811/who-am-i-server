@@ -12,7 +12,9 @@ import usersRouter from '~/routes/users.routes'
 import databaseService from '~/services/database.services'
 import { initFolders } from '~/utils/file'
 
-databaseService.connect()
+databaseService.connect().then(() => {
+  databaseService.indexPlayers()
+})
 
 initFolders()
 
