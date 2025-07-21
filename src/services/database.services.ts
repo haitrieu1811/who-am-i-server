@@ -5,6 +5,7 @@ import Image from '~/models/databases/Image'
 import League from '~/models/databases/League'
 import Nation from '~/models/databases/Nation'
 import Player from '~/models/databases/Player'
+import Question from '~/models/databases/Question'
 import { RefreshToken } from '~/models/databases/RefreshToken'
 import Team from '~/models/databases/Team'
 import User from '~/models/databases/User'
@@ -63,6 +64,10 @@ class DatabaseService {
 
   get players(): Collection<Player> {
     return this.db.collection(ENV_CONFIG.DB_PLAYERS_COLLECTION)
+  }
+
+  get questions(): Collection<Question> {
+    return this.db.collection(ENV_CONFIG.DB_QUESTIONS_COLLECTION)
   }
 }
 

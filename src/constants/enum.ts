@@ -9,3 +9,9 @@ export enum PlayerPosition {
   Mf,
   Fw
 }
+
+export enum QuestionLevel {
+  Easy,
+  Medium,
+  Hard
+}
