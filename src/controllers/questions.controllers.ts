@@ -37,3 +37,10 @@ export const getQuestionController = async (req: Request<LevelReqParams>, res: R
     data: result
   })
 }
+
+export const deleteQuestionController = async (req: Request<QuestionIdReqParams>, res: Response) => {
+  await questionsService.deleteOne(new ObjectId(req.params.questionId))
+  res.json({
+    message: 'Xóa câu hỏi thành công.'
+  })
+}

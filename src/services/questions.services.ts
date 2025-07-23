@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 
-import Question from '~/models/databases/Question'
 import { QuestionLevel } from '~/constants/enum'
+import Question from '~/models/databases/Question'
 import { CreateQuestionReqBody } from '~/models/requests/questions.requests'
 import databaseService from '~/services/database.services'
 
@@ -232,6 +232,13 @@ class QuestionsService {
     return {
       question: questions[0]
     }
+  }
+
+  async deleteOne(questionId: ObjectId) {
+    await databaseService.questions.deleteOne({
+      _id: questionId
+    })
+    return true
   }
 }
 
