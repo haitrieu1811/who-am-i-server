@@ -1,3 +1,4 @@
+import cors from 'cors'
 import express from 'express'
 
 import { ENV_CONFIG } from '~/constants/config'
@@ -21,6 +22,12 @@ initFolders()
 
 const app = express()
 const port = ENV_CONFIG.PORT ?? 4000
+
+app.use(
+  cors({
+    origin: '*'
+  })
+)
 
 app.use(express.json())
 app.use('/users', usersRouter)
