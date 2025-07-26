@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { WithId } from 'mongodb'
 import omit from 'lodash/omit'
+import { ObjectId, WithId } from 'mongodb'
 
 import { ENV_CONFIG } from '~/constants/config'
+import { RefreshToken } from '~/models/databases/RefreshToken'
 import User, { TokenPayload } from '~/models/databases/User'
 import { RegisterReqBody } from '~/models/requests/users.requests'
 import databaseService from '~/services/database.services'
@@ -85,6 +85,44 @@ class UsersService {
       accessToken,
       refreshToken,
       user: omit(user, ['password'])
+    }
+  }
+
+  // Refresh token
+  async refreshToken({
+    refreshToken,
+    decodedRefreshToken
+  }: {
+    refreshToken: string
+    decodedRefreshToken: TokenPayload & { exp: number }
+  }) {
+    const { userId, userRole, exp } = decodedRefreshToken
+    // Tạo tokens mới
+    const [newAcessToken, newRefreshToken] = await this.signAccessAndRefreshToken({
+      userId,
+      userRole,
+      exp
+    })
+    // Giải mã refresh token mới
+    const decodedNewRefreshToken = await this.decodedRefreshToken(newRefreshToken)
+    await Promise.all([
+      // Thêm refresh token mới vào DB
+      await databaseService.refreshTokens.insertOne(
+        new RefreshToken({
+          userId: new ObjectId(decodedNewRefreshToken.userId),
+          token: newRefreshToken,
+          iat: decodedNewRefreshToken.iat,
+          exp: decodedNewRefreshToken.exp
+        })
+      ),
+      // Xóa refresh token cũ
+      await databaseService.refreshTokens.deleteOne({
+        token: refreshToken
+      })
+    ])
+    return {
+      accessToken: newAcessToken,
+      refreshToken: newRefreshToken
     }
   }
 }

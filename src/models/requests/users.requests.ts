@@ -5,3 +5,7 @@ export type RegisterReqBody = {
   password: string
   role: UserRole
 }
+
+export type RefreshTokenReqBody = {
+  refreshToken: string
+}
