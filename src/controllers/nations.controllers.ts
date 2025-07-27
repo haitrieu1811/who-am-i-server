@@ -31,6 +31,14 @@ export const getNationsController = async (
   })
 }
 
+export const getNationController = async (req: Request<NationIdReqParams>, res: Response) => {
+  const result = await nationsService.findOne(new ObjectId(req.params.nationId))
+  res.json({
+    message: 'Lấy thông tin quốc gia thành công.',
+    data: result
+  })
+}
+
 export const updateNationController = async (
   req: Request<NationIdReqParams, any, CreateNationReqBody>,
   res: Response

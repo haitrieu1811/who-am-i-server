@@ -23,39 +23,63 @@ class NationsService {
     }
   }
 
-  async findMany(query: PaginationReqQuery) {
-    const { page, limit, skip } = configurePagination(query)
-    const [nations, totalNations] = await Promise.all([
-      databaseService.nations
-        .aggregate([
-          {
-            $lookup: {
-              from: 'images',
-              localField: 'flag',
-              foreignField: '_id',
-              as: 'flag'
-            }
-          },
-          {
-            $unwind: {
-              path: '$flag'
-            }
-          },
-          {
-            $addFields: {
-              flag: {
+  async aggregateNation({ match = {}, skip = 0, limit = 20 }: { match?: object; skip?: number; limit?: number }) {
+    const nations = await databaseService.nations
+      .aggregate([
+        {
+          $match: match
+        },
+        {
+          $lookup: {
+            from: 'images',
+            localField: 'flag',
+            foreignField: '_id',
+            as: 'flag'
+          }
+        },
+        {
+          $unwind: {
+            path: '$flag'
+          }
+        },
+        {
+          $addFields: {
+            flag: {
+              url: {
                 $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$flag.name']
               }
             }
-          },
-          {
-            $skip: skip
-          },
-          {
-            $limit: limit
           }
-        ])
-        .toArray(),
+        },
+        {
+          $sort: {
+            name: 1
+          }
+        },
+        {
+          $skip: skip
+        },
+        {
+          $limit: limit
+        },
+        {
+          $project: {
+            'flag.name': 0,
+            'flag.createdAt': 0,
+            'flag.updatedAt': 0
+          }
+        }
+      ])
+      .toArray()
+    return {
+      nations
+    }
+  }
+
+  async findMany(query: PaginationReqQuery) {
+    const { page, limit, skip } = configurePagination(query)
+    const [{ nations }, totalNations] = await Promise.all([
+      this.aggregateNation({ limit, skip }),
       databaseService.nations.countDocuments({})
     ])
     return {
@@ -64,6 +88,17 @@ class NationsService {
       limit,
       totalRows: totalNations,
       totalPages: Math.ceil(totalNations / limit)
+    }
+  }
+
+  async findOne(nationId: ObjectId) {
+    const { nations } = await this.aggregateNation({
+      match: {
+        _id: nationId
+      }
+    })
+    return {
+      nation: nations[0]
     }
   }
 

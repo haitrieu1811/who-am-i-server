@@ -4,6 +4,7 @@ import { accessTokenValidator, isAdminValidator } from '~/middlewares/users.midd
 import {
   createNationController,
   deleteNationController,
+  getNationController,
   getNationsController,
   updateNationController
 } from '~/controllers/nations.controllers'
@@ -15,6 +16,8 @@ const nationsRouter = Router()
 nationsRouter.post('/', accessTokenValidator, isAdminValidator, createNationValidator, createNationController)
 
 nationsRouter.get('/', paginationValidator, getNationsController)
+
+nationsRouter.get('/:nationId', nationIdValidator, getNationController)
 
 nationsRouter.put('/:nationId', accessTokenValidator, isAdminValidator, nationIdValidator, updateNationController)
 
