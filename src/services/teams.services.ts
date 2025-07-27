@@ -56,9 +56,27 @@ class TeamsService {
             }
           },
           {
+            $lookup: {
+              from: 'images',
+              localField: 'league.logo',
+              foreignField: '_id',
+              as: 'leagueLogo'
+            }
+          },
+          {
+            $unwind: {
+              path: '$leagueLogo'
+            }
+          },
+          {
             $addFields: {
               logo: {
-                $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$logo.name']
+                url: {
+                  $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$logo.name']
+                }
+              },
+              'league.logo': {
+                $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$leagueLogo.name']
               }
             }
           },
@@ -84,7 +102,9 @@ class TeamsService {
           },
           {
             $project: {
-              'league.logo': 0
+              'logo.name': 0,
+              'logo.createdAt': 0,
+              'logo.updatedAt': 0
             }
           },
           {
