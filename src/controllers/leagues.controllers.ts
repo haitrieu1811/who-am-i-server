@@ -31,6 +31,14 @@ export const getLeaguesController = async (
   })
 }
 
+export const getLeagueController = async (req: Request<LeagueIdReqParams>, res: Response) => {
+  const result = await leaguesService.findOne(new ObjectId(req.params.leagueId))
+  res.json({
+    message: 'Lấy thông tin giải đấu thành công.',
+    data: result
+  })
+}
+
 export const updateLeagueController = async (
   req: Request<LeagueIdReqParams, any, CreateLeagueReqBody>,
   res: Response

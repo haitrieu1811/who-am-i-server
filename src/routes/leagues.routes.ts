@@ -3,6 +3,7 @@ import { Router } from 'express'
 import {
   createLeagueController,
   deleteLeagueController,
+  getLeagueController,
   getLeaguesController,
   updateLeagueController
 } from '~/controllers/leagues.controllers'
@@ -15,6 +16,8 @@ const leaguesRouter = Router()
 leaguesRouter.post('/', accessTokenValidator, isAdminValidator, createLeagueValidator, createLeagueController)
 
 leaguesRouter.get('/', paginationValidator, getLeaguesController)
+
+leaguesRouter.get('/:leagueId', leagueIdValidator, getLeagueController)
 
 leaguesRouter.put('/:leagueId', accessTokenValidator, isAdminValidator, leagueIdValidator, updateLeagueController)
 
