@@ -81,6 +81,15 @@ class UsersService {
       userId: _id.toString(),
       userRole: role
     })
+    const { iat, exp } = await this.decodedRefreshToken(refreshToken)
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({
+        token: refreshToken,
+        userId: _id,
+        iat,
+        exp
+      })
+    )
     return {
       accessToken,
       refreshToken,

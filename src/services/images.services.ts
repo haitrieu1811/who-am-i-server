@@ -48,7 +48,7 @@ class MediasService {
       })
     )
     return {
-      medias: result
+      images: result
     }
   }
 
