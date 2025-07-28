@@ -1,9 +1,10 @@
 import { ObjectId } from 'mongodb'
+import omitBy from 'lodash/omitBy'
+import isUndefined from 'lodash/isUndefined'
 
 import { ENV_CONFIG } from '~/constants/config'
 import Team from '~/models/databases/Team'
-import { CreateTeamReqBody } from '~/models/requests/teams.requests'
-import { PaginationReqQuery } from '~/models/requests/utils.requests'
+import { CreateTeamReqBody, GetTeamsReqQuery } from '~/models/requests/teams.requests'
 import databaseService from '~/services/database.services'
 import { configurePagination } from '~/utils/helpers'
 
@@ -24,11 +25,13 @@ class TeamsService {
     }
   }
 
-  async findMany(query: PaginationReqQuery) {
-    const { page, limit, skip } = configurePagination(query)
+  async aggregateTeam({ match = {}, skip = 0, limit = 20 }: { match?: object; skip?: number; limit?: number }) {
     const [teams, totalTeams] = await Promise.all([
       databaseService.teams
         .aggregate([
+          {
+            $match: match
+          },
           {
             $lookup: {
               from: 'images',
@@ -120,8 +123,40 @@ class TeamsService {
           }
         ])
         .toArray(),
-      databaseService.teams.countDocuments({})
+      databaseService.teams
+        .aggregate([
+          {
+            $match: match
+          },
+          {
+            $count: 'count'
+          }
+        ])
+        .toArray()
     ])
+    return {
+      teams,
+      totalTeams: totalTeams[0]?.count ?? 0
+    }
+  }
+
+  async findMany(query: GetTeamsReqQuery) {
+    const { page, limit, skip } = configurePagination(query)
+    const text = query.name
+      ? {
+          $text: {
+            $search: query.name
+          }
+        }
+      : {}
+    const match = omitBy(
+      {
+        ...text,
+        leagueId: query.leagueId ? new ObjectId(query.leagueId) : undefined
+      },
+      isUndefined
+    )
+    const { teams, totalTeams } = await this.aggregateTeam({ limit, skip, match })
     return {
       teams,
       page,

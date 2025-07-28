@@ -1,3 +1,5 @@
+import { PaginationReqQuery } from '~/models/requests/utils.requests'
+
 export type CreateTeamReqBody = {
   logo: string
   name: string
@@ -6,4 +8,9 @@ export type CreateTeamReqBody = {
 
 export type TeamIdReqParams = {
   teamId: string
+}
+
+export type GetTeamsReqQuery = PaginationReqQuery & {
+  name?: string
+  leagueId?: string
 }

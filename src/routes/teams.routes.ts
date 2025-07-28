@@ -6,7 +6,7 @@ import {
   getTeamsController,
   updateTeamController
 } from '~/controllers/teams.controllers'
-import { createTeamValidator, teamIdValidator } from '~/middlewares/teams.middlewares'
+import { createTeamValidator, getTeamsValidator, teamIdValidator } from '~/middlewares/teams.middlewares'
 import { accessTokenValidator, isAdminValidator } from '~/middlewares/users.middlewares'
 import { paginationValidator } from '~/middlewares/utils.middlewares'
 
@@ -14,7 +14,7 @@ const teamsRouter = Router()
 
 teamsRouter.post('/', accessTokenValidator, isAdminValidator, createTeamValidator, createTeamController)
 
-teamsRouter.get('/', paginationValidator, getTeamsController)
+teamsRouter.get('/', paginationValidator, getTeamsValidator, getTeamsController)
 
 teamsRouter.put(
   '/:teamId',

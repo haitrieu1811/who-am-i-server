@@ -62,3 +62,18 @@ export const teamIdValidator = validate(
     ['params']
   )
 )
+
+export const getTeamsValidator = validate(
+  checkSchema(
+    {
+      name: {
+        optional: true
+      },
+      leagueId: {
+        ...leagueIdSchema,
+        optional: true
+      }
+    },
+    ['query']
+  )
+)
