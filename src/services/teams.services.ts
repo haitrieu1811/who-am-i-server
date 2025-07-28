@@ -8,12 +8,12 @@ import databaseService from '~/services/database.services'
 import { configurePagination } from '~/utils/helpers'
 
 class TeamsService {
-  async insertOne({ body, leagueId }: { body: CreateTeamReqBody; leagueId: ObjectId }) {
+  async insertOne(body: CreateTeamReqBody) {
     const { insertedId } = await databaseService.teams.insertOne(
       new Team({
         ...body,
         logo: new ObjectId(body.logo),
-        leagueId
+        leagueId: new ObjectId(body.leagueId)
       })
     )
     const team = await databaseService.teams.findOne({
@@ -139,7 +139,8 @@ class TeamsService {
       {
         $set: {
           ...body,
-          logo: new ObjectId(body.logo)
+          logo: new ObjectId(body.logo),
+          leagueId: new ObjectId(body.leagueId)
         },
         $currentDate: {
           updatedAt: true

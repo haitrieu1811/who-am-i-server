@@ -8,10 +8,7 @@ import { PaginationReqQuery } from '~/models/requests/utils.requests'
 import teamsService from '~/services/teams.services'
 
 export const createTeamController = async (req: Request<LeagueIdReqParams, any, CreateTeamReqBody>, res: Response) => {
-  const result = await teamsService.insertOne({
-    body: req.body,
-    leagueId: new ObjectId(req.params.leagueId)
-  })
+  const result = await teamsService.insertOne(req.body)
   res.json({
     message: 'Tạo đội bóng thành công.',
     data: result

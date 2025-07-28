@@ -1,6 +1,7 @@
 import { checkSchema, ParamSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { leagueIdSchema } from '~/middlewares/leagues.middlewares'
 
 import { mongoIdSchema } from '~/middlewares/utils.middlewares'
 import { ErrorWithStatus } from '~/models/Error'
@@ -46,7 +47,8 @@ export const createTeamValidator = validate(
         notEmpty: {
           errorMessage: 'Tên đội bóng là bắt buộc.'
         }
-      }
+      },
+      leagueId: leagueIdSchema
     },
     ['body']
   )
