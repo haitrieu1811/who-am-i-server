@@ -38,6 +38,13 @@ class DatabaseService {
     }
   }
 
+  async indexTeams() {
+    const isExists = await this.teams.indexExists(['name_text'])
+    if (!isExists) {
+      await this.teams.createIndex({ name: 'text' })
+    }
+  }
+
   get users(): Collection<User> {
     return this.db.collection(ENV_CONFIG.DB_USERS_COLLECTION)
   }
