@@ -7,7 +7,7 @@ export type CreatePlayerReqBody = {
   teamId: string
   avatar: string | null
   name: string
-  dateOfBirth: Date
+  dateOfBirth: string
   shirtNumber: number
   position: PlayerPosition
 }

@@ -62,14 +62,14 @@ export const createPlayerValidator = validate(
           errorMessage: 'Tên cầu thủ là bắt buộc.'
         }
       },
-      // dateOfBirth: {
-      //   notEmpty: {
-      //     errorMessage: 'Ngày sinh cầu thủ là bắt buộc.'
-      //   },
-      //   isDate: {
-      //     errorMessage: 'Ngày sinh cầu thủ không hợp lệ.'
-      //   }
-      // },
+      dateOfBirth: {
+        notEmpty: {
+          errorMessage: 'Ngày sinh cầu thủ là bắt buộc.'
+        },
+        isISO8601: {
+          errorMessage: 'Ngày sinh cầu thủ không hợp lệ.'
+        }
+      },
       shirtNumber: {
         custom: {
           options: (value) => {

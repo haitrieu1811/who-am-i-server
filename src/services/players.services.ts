@@ -1,3 +1,4 @@
+import isUndefined from 'lodash/isUndefined'
 import omitBy from 'lodash/omitBy'
 import { ObjectId } from 'mongodb'
 
@@ -12,7 +13,7 @@ class PlayersService {
     const { insertedId } = await databaseService.players.insertOne(
       new Player({
         ...body,
-        dateOfBirth: new Date(),
+        dateOfBirth: new Date(body.dateOfBirth),
         nationId: new ObjectId(body.nationId),
         leagueId: new ObjectId(body.leagueId),
         teamId: new ObjectId(body.teamId),
@@ -130,13 +131,15 @@ class PlayersService {
           {
             $addFields: {
               avatar: {
-                $cond: [
-                  '$avatar',
-                  {
-                    $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$avatar.name']
-                  },
-                  null
-                ]
+                url: {
+                  $cond: [
+                    '$avatar',
+                    {
+                      $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$avatar.name']
+                    },
+                    null
+                  ]
+                }
               },
               'nation.flag': {
                 $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$nationFlag.name']
@@ -146,6 +149,13 @@ class PlayersService {
               },
               'team.logo': {
                 $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$teamLogo.name']
+              },
+              age: {
+                $dateDiff: {
+                  startDate: '$dateOfBirth',
+                  endDate: '$$NOW',
+                  unit: 'year'
+                }
               }
             }
           },
@@ -173,6 +183,9 @@ class PlayersService {
               team: {
                 $first: '$team'
               },
+              age: {
+                $first: '$age'
+              },
               dateOfBirth: {
                 $first: '$dateOfBirth'
               },
@@ -194,11 +207,21 @@ class PlayersService {
           },
           {
             $limit: limit
+          },
+          {
+            $project: {
+              'avatar.name': 0,
+              'avatar.createdAt': 0,
+              'avatar.updatedAt': 0
+            }
           }
         ])
         .toArray(),
       databaseService.players
         .aggregate([
+          {
+            $match: match
+          },
           {
             $count: 'total'
           }
@@ -213,16 +236,19 @@ class PlayersService {
 
   async findMany(query: GetPlayersReqQuery) {
     const { page, limit, skip } = configurePagination(query)
-    const text = query.name
+    const text = query.name?.trim()
       ? {
           $text: {
             $search: query.name
           }
         }
       : {}
-    const match = omitBy({
-      ...text
-    })
+    const match = omitBy(
+      {
+        ...text
+      },
+      isUndefined
+    )
     const { players, totalPlayers } = await this.aggregatePlayers({
       match,
       skip,
@@ -256,7 +282,7 @@ class PlayersService {
       {
         $set: {
           ...body,
-          dateOfBirth: new Date(),
+          dateOfBirth: new Date(body.dateOfBirth),
           nationId: new ObjectId(body.nationId),
           leagueId: new ObjectId(body.leagueId),
           teamId: new ObjectId(body.teamId),

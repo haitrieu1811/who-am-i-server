@@ -149,14 +149,18 @@ class TeamsService {
           }
         }
       : {}
-    const match = omitBy(
+    const configuredMatch = omitBy(
       {
         ...text,
         leagueId: query.leagueId ? new ObjectId(query.leagueId) : undefined
       },
       isUndefined
     )
-    const { teams, totalTeams } = await this.aggregateTeam({ limit, skip, match })
+    const { teams, totalTeams } = await this.aggregateTeam({
+      limit,
+      skip,
+      match: configuredMatch
+    })
     return {
       teams,
       page,
