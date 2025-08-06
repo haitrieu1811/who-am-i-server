@@ -3,7 +3,8 @@ import { Router } from 'express'
 import {
   createQuestionController,
   deleteQuestionController,
-  getQuestionController,
+  getQuestionByIdController,
+  getQuestionByLevelController,
   getQuestionsController,
   updateQuestionController
 } from '~/controllers/questions.controllers'
@@ -35,7 +36,15 @@ questionsRouter.put(
   updateQuestionController
 )
 
-questionsRouter.get('/level/:level', getQuestionController)
+questionsRouter.get('/level/:level', getQuestionByLevelController)
+
+questionsRouter.get(
+  '/:questionId',
+  accessTokenValidator,
+  isAdminValidator,
+  questionIdValidator,
+  getQuestionByIdController
+)
 
 questionsRouter.delete(
   '/:questionId',

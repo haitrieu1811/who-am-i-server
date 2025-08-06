@@ -31,8 +31,20 @@ export const updateQuestionController = async (
   })
 }
 
-export const getQuestionController = async (req: Request<LevelReqParams>, res: Response) => {
-  const result = await questionsService.findOne(Number(req.params.level))
+export const getQuestionByLevelController = async (req: Request<LevelReqParams>, res: Response) => {
+  const result = await questionsService.findOne({
+    level: Number(req.params.level)
+  })
+  res.json({
+    message: 'Lấy câu hỏi thành công.',
+    data: result
+  })
+}
+
+export const getQuestionByIdController = async (req: Request<QuestionIdReqParams>, res: Response) => {
+  const result = await questionsService.findOne({
+    _id: new ObjectId(req.params.questionId)
+  })
   res.json({
     message: 'Lấy câu hỏi thành công.',
     data: result

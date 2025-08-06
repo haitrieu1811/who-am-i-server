@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb'
-import { ENV_CONFIG } from '~/constants/config'
 
-import { QuestionLevel } from '~/constants/enum'
+import { ENV_CONFIG } from '~/constants/config'
 import Question from '~/models/databases/Question'
 import { CreateQuestionReqBody } from '~/models/requests/questions.requests'
 import { PaginationReqQuery } from '~/models/requests/utils.requests'
@@ -158,13 +157,16 @@ class QuestionsService {
       {
         $addFields: {
           'player.avatar': {
-            $cond: [
-              '$avatar',
-              {
-                $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$avatar.name']
-              },
-              null
-            ]
+            _id: '$avatar._id',
+            url: {
+              $cond: [
+                '$avatar',
+                {
+                  $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$avatar.name']
+                },
+                null
+              ]
+            }
           },
           'nation.flag': {
             $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$nationFlag.name']
@@ -213,7 +215,6 @@ class QuestionsService {
           'player.nationId': 0,
           'player.leagueId': 0,
           'player.teamId': 0,
-          'player.dateOfBirth': 0,
           'player.createdAt': 0,
           'player.updatedAt': 0,
           'player.team.leagueId': 0
@@ -222,14 +223,12 @@ class QuestionsService {
     ]
   }
 
-  async findOne(level: QuestionLevel) {
+  async findOne(match: object) {
     const aggregate = this.aggregateQuestion()
     const questions = await databaseService.questions
       .aggregate([
         {
-          $match: {
-            level
-          }
+          $match: match
         },
         ...aggregate,
         {
