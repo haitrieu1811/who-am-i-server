@@ -230,7 +230,7 @@ class PlayersService {
     ])
     return {
       players,
-      totalPlayers: totalPlayers[0].total
+      totalPlayers: totalPlayers[0]?.total ?? 0
     }
   }
 

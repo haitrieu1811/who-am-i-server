@@ -4,6 +4,7 @@ import {
   createQuestionController,
   deleteQuestionController,
   getQuestionController,
+  getQuestionsController,
   updateQuestionController
 } from '~/controllers/questions.controllers'
 import {
@@ -12,6 +13,7 @@ import {
   questionIdValidator
 } from '~/middlewares/questions.middlewares'
 import { accessTokenValidator, isAdminValidator } from '~/middlewares/users.middlewares'
+import { paginationValidator } from '~/middlewares/utils.middlewares'
 
 const questionsRouter = Router()
 
@@ -42,5 +44,7 @@ questionsRouter.delete(
   questionIdValidator,
   deleteQuestionController
 )
+
+questionsRouter.get('/', accessTokenValidator, isAdminValidator, paginationValidator, getQuestionsController)
 
 export default questionsRouter

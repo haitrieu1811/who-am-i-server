@@ -3,6 +3,7 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 
 import { CreateQuestionReqBody, LevelReqParams, QuestionIdReqParams } from '~/models/requests/questions.requests'
+import { PaginationReqQuery } from '~/models/requests/utils.requests'
 import questionsService from '~/services/questions.services'
 
 export const createQuestionController = async (
@@ -35,6 +36,20 @@ export const getQuestionController = async (req: Request<LevelReqParams>, res: R
   res.json({
     message: 'Lấy câu hỏi thành công.',
     data: result
+  })
+}
+
+export const getQuestionsController = async (
+  req: Request<ParamsDictionary, any, any, PaginationReqQuery>,
+  res: Response
+) => {
+  const { questions, ...pagination } = await questionsService.findMany(req.query)
+  res.json({
+    message: 'Lấy danh sách câu hỏi thành công.',
+    data: {
+      questions,
+      pagination
+    }
   })
 }
 
