@@ -245,7 +245,9 @@ class PlayersService {
       : {}
     const match = omitBy(
       {
-        ...text
+        ...text,
+        leagueId: query.leagueId ? new ObjectId(query.leagueId) : undefined,
+        teamId: query.teamId ? new ObjectId(query.teamId) : undefined
       },
       isUndefined
     )
