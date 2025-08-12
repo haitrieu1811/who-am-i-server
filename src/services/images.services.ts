@@ -22,7 +22,7 @@ class MediasService {
         const newFullName = `${newName}.jpg`
         const newPath = path.resolve(UPLOAD_IMAGE_DIR, newFullName)
         if (image.newFilename !== newFullName) {
-          await sharp(image.filepath).jpeg().toFile(newPath)
+          await sharp(image.filepath).png().toFile(newPath)
         }
         await uploadFileToS3({
           filename: `images/${newFullName}`,
