@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 
-import { CreateQuestionReqBody, LevelReqParams, QuestionIdReqParams } from '~/models/requests/questions.requests'
+import { CreateQuestionReqBody, QuestionIdReqParams } from '~/models/requests/questions.requests'
 import { PaginationReqQuery } from '~/models/requests/utils.requests'
 import questionsService from '~/services/questions.services'
 
@@ -31,12 +31,10 @@ export const updateQuestionController = async (
   })
 }
 
-export const getQuestionByLevelController = async (req: Request<LevelReqParams>, res: Response) => {
-  const result = await questionsService.findOne({
-    level: Number(req.params.level)
-  })
+export const getRandomQuestionController = async (req: Request, res: Response) => {
+  const result = await questionsService.findOne()
   res.json({
-    message: 'Lấy câu hỏi thành công.',
+    message: 'Lấy câu hỏi ngẫu nhiên thành công.',
     data: result
   })
 }

@@ -223,7 +223,7 @@ class QuestionsService {
     ]
   }
 
-  async findOne(match: object) {
+  async findOne(match: object = {}) {
     const aggregate = this.aggregateQuestion()
     const questions = await databaseService.questions
       .aggregate([

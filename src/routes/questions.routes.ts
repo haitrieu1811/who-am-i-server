@@ -4,8 +4,8 @@ import {
   createQuestionController,
   deleteQuestionController,
   getQuestionByIdController,
-  getQuestionByLevelController,
   getQuestionsController,
+  getRandomQuestionController,
   updateQuestionController
 } from '~/controllers/questions.controllers'
 import {
@@ -36,7 +36,7 @@ questionsRouter.put(
   updateQuestionController
 )
 
-questionsRouter.get('/level/:level', getQuestionByLevelController)
+questionsRouter.get('/random', getRandomQuestionController)
 
 questionsRouter.get(
   '/:questionId',
