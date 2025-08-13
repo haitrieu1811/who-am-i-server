@@ -247,7 +247,8 @@ class PlayersService {
       {
         ...text,
         leagueId: query.leagueId ? new ObjectId(query.leagueId) : undefined,
-        teamId: query.teamId ? new ObjectId(query.teamId) : undefined
+        teamId: query.teamId ? new ObjectId(query.teamId) : undefined,
+        position: query.position ? Number(query.position) : undefined
       },
       isUndefined
     )

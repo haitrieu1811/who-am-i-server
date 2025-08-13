@@ -15,6 +15,26 @@ import { validate } from '~/utils/validation'
 
 const positions = numberEnumToArray(PlayerPosition)
 
+const positionSchema: ParamSchema = {
+  custom: {
+    options: (value) => {
+      if (value === undefined) {
+        throw new ErrorWithStatus({
+          message: 'Vị trí cầu thủ là bắt buộc.',
+          status: HTTP_STATUS.BAD_REQUEST
+        })
+      }
+      if (!positions.includes(Number(value))) {
+        throw new ErrorWithStatus({
+          message: 'Vị trí cầu thủ không hợp lệ.',
+          status: HTTP_STATUS.BAD_REQUEST
+        })
+      }
+      return true
+    }
+  }
+}
+
 export const playerIdSchema: ParamSchema = {
   trim: true,
   custom: {
@@ -86,15 +106,7 @@ export const createPlayerValidator = validate(
           }
         }
       },
-      position: {
-        notEmpty: {
-          errorMessage: 'Vị trí cầu thủ là bắt buộc.'
-        },
-        isIn: {
-          options: [positions],
-          errorMessage: 'Vị trí cầu thủ không hợp lệ.'
-        }
-      }
+      position: positionSchema
     },
     ['body']
   )
@@ -106,5 +118,17 @@ export const playerIdValidator = validate(
       playerId: playerIdSchema
     },
     ['params']
+  )
+)
+
+export const getPlayersValidator = validate(
+  checkSchema(
+    {
+      position: {
+        ...positionSchema,
+        optional: true
+      }
+    },
+    ['query']
   )
 )

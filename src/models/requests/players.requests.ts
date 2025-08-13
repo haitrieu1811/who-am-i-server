@@ -16,6 +16,7 @@ export type GetPlayersReqQuery = PaginationReqQuery & {
   name?: string
   leagueId?: string
   teamId?: string
+  position?: string
 }
 
 export type PlayerIdReqParams = {
