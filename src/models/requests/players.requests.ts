@@ -14,6 +14,7 @@ export type CreatePlayerReqBody = {
 
 export type GetPlayersReqQuery = PaginationReqQuery & {
   name?: string
+  nationId?: string
   leagueId?: string
   teamId?: string
   position?: string
