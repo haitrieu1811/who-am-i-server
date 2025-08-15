@@ -246,7 +246,7 @@ class QuestionsService {
   async findMany(query: PaginationReqQuery) {
     const { page, limit, skip } = configurePagination(query)
     const aggregate = this.aggregateQuestion()
-    const [questions, totalQuestions] = await Promise.all([
+    const [questions, totalQuestions, existedPlayerIds] = await Promise.all([
       databaseService.questions
         .aggregate([
           ...aggregate,
@@ -258,14 +258,21 @@ class QuestionsService {
           }
         ])
         .toArray(),
-      databaseService.questions.countDocuments({})
+      databaseService.questions.countDocuments({}),
+      databaseService.questions
+        .find({})
+        .project({
+          answerId: 1
+        })
+        .toArray()
     ])
     return {
       questions,
       page,
       limit,
       totalRows: totalQuestions,
-      totalPages: Math.ceil(totalQuestions / limit)
+      totalPages: Math.ceil(totalQuestions / limit),
+      existedPlayerIds: existedPlayerIds.map((item) => item.answerId)
     }
   }
 

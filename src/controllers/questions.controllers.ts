@@ -53,12 +53,13 @@ export const getQuestionsController = async (
   req: Request<ParamsDictionary, any, any, PaginationReqQuery>,
   res: Response
 ) => {
-  const { questions, ...pagination } = await questionsService.findMany(req.query)
+  const { questions, existedPlayerIds, ...pagination } = await questionsService.findMany(req.query)
   res.json({
     message: 'Lấy danh sách câu hỏi thành công.',
     data: {
       questions,
-      pagination
+      pagination,
+      existedPlayerIds
     }
   })
 }
