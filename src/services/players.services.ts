@@ -64,19 +64,6 @@ class PlayersService {
           },
           {
             $lookup: {
-              from: 'leagues',
-              localField: 'leagueId',
-              foreignField: '_id',
-              as: 'league'
-            }
-          },
-          {
-            $unwind: {
-              path: '$league'
-            }
-          },
-          {
-            $lookup: {
               from: 'teams',
               localField: 'teamId',
               foreignField: '_id',
@@ -87,6 +74,19 @@ class PlayersService {
             $unwind: {
               path: '$team',
               preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $lookup: {
+              from: 'leagues',
+              localField: 'team.leagueId',
+              foreignField: '_id',
+              as: 'league'
+            }
+          },
+          {
+            $unwind: {
+              path: '$league'
             }
           },
           {
@@ -212,7 +212,8 @@ class PlayersService {
             $project: {
               'avatar.name': 0,
               'avatar.createdAt': 0,
-              'avatar.updatedAt': 0
+              'avatar.updatedAt': 0,
+              'team.leagueId': 0
             }
           }
         ])
