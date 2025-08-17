@@ -130,25 +130,32 @@ class PlayersService {
           },
           {
             $addFields: {
-              avatar: {
-                url: {
-                  $cond: [
-                    '$avatar',
-                    {
-                      $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$avatar.name']
-                    },
-                    null
-                  ]
-                }
+              'avatar.url': {
+                $cond: [
+                  '$avatar',
+                  {
+                    $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$avatar.name']
+                  },
+                  null
+                ]
               },
               'nation.flag': {
-                $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$nationFlag.name']
+                _id: '$nationFlag._id',
+                url: {
+                  $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$nationFlag.name']
+                }
               },
               'league.logo': {
-                $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$leagueLogo.name']
+                _id: '$leagueLogo._id',
+                url: {
+                  $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$leagueLogo.name']
+                }
               },
               'team.logo': {
-                $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$teamLogo.name']
+                _id: '$teamLogo._id',
+                url: {
+                  $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$teamLogo.name']
+                }
               },
               age: {
                 $dateDiff: {

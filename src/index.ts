@@ -17,6 +17,7 @@ import { initFolders } from '~/utils/file'
 databaseService.connect().then(() => {
   databaseService.indexPlayers()
   databaseService.indexTeams()
+  databaseService.indexNations()
 })
 
 initFolders()

@@ -1,9 +1,10 @@
 import { ObjectId } from 'mongodb'
+import omitBy from 'lodash/omitBy'
+import isUndefined from 'lodash/isUndefined'
 
 import { ENV_CONFIG } from '~/constants/config'
 import Nation from '~/models/databases/Nation'
-import { CreateNationReqBody } from '~/models/requests/nations.requests'
-import { PaginationReqQuery } from '~/models/requests/utils.requests'
+import { CreateNationReqBody, GetNationsReqQuery } from '~/models/requests/nations.requests'
 import databaseService from '~/services/database.services'
 import { configurePagination } from '~/utils/helpers'
 
@@ -24,64 +25,87 @@ class NationsService {
   }
 
   async aggregateNation({ match = {}, skip = 0, limit = 20 }: { match?: object; skip?: number; limit?: number }) {
-    const nations = await databaseService.nations
-      .aggregate([
-        {
-          $match: match
-        },
-        {
-          $lookup: {
-            from: 'images',
-            localField: 'flag',
-            foreignField: '_id',
-            as: 'flag'
-          }
-        },
-        {
-          $unwind: {
-            path: '$flag'
-          }
-        },
-        {
-          $addFields: {
-            flag: {
-              url: {
-                $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$flag.name']
+    const [nations, totalNations] = await Promise.all([
+      databaseService.nations
+        .aggregate([
+          {
+            $match: match
+          },
+          {
+            $lookup: {
+              from: 'images',
+              localField: 'flag',
+              foreignField: '_id',
+              as: 'flag'
+            }
+          },
+          {
+            $unwind: {
+              path: '$flag'
+            }
+          },
+          {
+            $addFields: {
+              flag: {
+                url: {
+                  $concat: [ENV_CONFIG.SERVER_HOST, '/static/images/', '$flag.name']
+                }
               }
             }
+          },
+          {
+            $sort: {
+              name: 1
+            }
+          },
+          {
+            $skip: skip
+          },
+          {
+            $limit: limit
+          },
+          {
+            $project: {
+              'flag.name': 0,
+              'flag.createdAt': 0,
+              'flag.updatedAt': 0
+            }
           }
-        },
-        {
-          $sort: {
-            name: 1
+        ])
+        .toArray(),
+      databaseService.nations
+        .aggregate([
+          {
+            $match: match
+          },
+          {
+            $count: 'total'
           }
-        },
-        {
-          $skip: skip
-        },
-        {
-          $limit: limit
-        },
-        {
-          $project: {
-            'flag.name': 0,
-            'flag.createdAt': 0,
-            'flag.updatedAt': 0
-          }
-        }
-      ])
-      .toArray()
+        ])
+        .toArray()
+    ])
     return {
-      nations
+      nations,
+      totalNations: totalNations[0]?.total ?? 0
     }
   }
 
-  async findMany(query: PaginationReqQuery) {
+  async findMany(query: GetNationsReqQuery) {
     const { page, limit, skip } = configurePagination(query)
-    const [{ nations }, totalNations] = await Promise.all([
-      this.aggregateNation({ limit, skip }),
-      databaseService.nations.countDocuments({})
-    ])
+    const text = query.name
+      ? {
+          $text: {
+            $search: query.name
+          }
+        }
+      : {}
+    const match = omitBy(
+      {
+        ...text
+      },
+      isUndefined
+    )
+    const { nations, totalNations } = await this.aggregateNation({ match, limit, skip })
     return {
       nations,
       page,

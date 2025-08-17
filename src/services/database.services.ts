@@ -45,6 +45,13 @@ class DatabaseService {
     }
   }
 
+  async indexNations() {
+    const isExists = await this.nations.indexExists(['name_text'])
+    if (!isExists) {
+      await this.nations.createIndex({ name: 'text' })
+    }
+  }
+
   get users(): Collection<User> {
     return this.db.collection(ENV_CONFIG.DB_USERS_COLLECTION)
   }
