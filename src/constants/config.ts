@@ -19,7 +19,7 @@ if (!fs.existsSync(path.resolve(envFilename))) {
 }
 
 config({
-  path: '.env'
+  path: envFilename
 })
 
 export const isProduction = env === 'production'

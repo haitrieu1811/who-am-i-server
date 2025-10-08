@@ -1,4 +1,4 @@
-import { Collection, Db, MongoClient, MongoError } from 'mongodb'
+import { Collection, Db, MongoClient } from 'mongodb'
 
 import { ENV_CONFIG } from '~/constants/config'
 import Image from '~/models/databases/Image'
@@ -23,21 +23,10 @@ class DatabaseService {
 
   async connect() {
     try {
-      console.log('🔌 Attempting to connect to MongoDB...')
-      console.log('📊 Database:', ENV_CONFIG.DB_NAME)
-      console.log('👤 Username:', ENV_CONFIG.DB_USERNAME)
-      console.log('🌐 Environment:', process.env.NODE_ENV)
       await this.db.command({ ping: 1 })
       console.log('✅ Successfully connected to MongoDB!')
     } catch (error) {
-      if (error instanceof MongoError) {
-        console.error('❌ MongoDB connection failed:')
-        console.error('📝 Error:', error.message)
-        console.error('🔢 Code:', error.code)
-        console.error('🔗 Connection String:', uri.replace(/\/\/.*@/, '//***:***@'))
-        throw error
-      }
-      console.error('❌ Unexpected error:', error)
+      console.error('❌ MongoDB connection failed:')
       throw error
     }
   }
